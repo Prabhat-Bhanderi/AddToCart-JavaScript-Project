@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <title>Ecommerce || Login</title>
+
+  <!--favicon-->
+  <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
+
+  <!-- Bootstrap core CSS-->
+  <link href="assets/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- animate CSS-->
+  <link href="assets/css/animate.css" rel="stylesheet" type="text/css" />
+  <!-- Icons CSS-->
+  <link href="assets/css/icons.css" rel="stylesheet" type="text/css" />
+  <!-- Sidebar CSS-->
+  <link href="assets/css/sidebar-menu.css" rel="stylesheet" />
+  <!-- Custom Style-->
+  <link href="assets/css/app-style.css" rel="stylesheet" />
+
+</head>
+
+<body class="bg-theme bg-theme1">
+
+  <!-- Start wrapper-->
+  <div id="wrapper">
+
+    <div class="card card-authentication1 mx-auto my-4">
+      <div class="card-body">
+        <div class="card-content p-2">
+          <div class="text-center">
+            <img src="assets/images/logo-icon.png" alt="logo icon">
+          </div>
+          <div class="card-title text-uppercase text-center py-3">Sign Up</div>
+          <form>
+            <div class="form-group">
+              <label for="name" class="sr-only">Name</label>
+              <div class="position-relative has-icon-right">
+                <input type="text" id="name" class="form-control input-shadow" placeholder="Enter Your Name">
+                <div class="form-control-position">
+                  <i class="icon-user"></i>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="username" class="sr-only">Name</label>
+              <div class="position-relative has-icon-right">
+                <input type="text" id="username" class="form-control input-shadow" placeholder="Enter Your Username">
+                <div class="form-control-position">
+                  <i class="icon-user"></i>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="email" class="sr-only">Email ID</label>
+              <div class="position-relative has-icon-right">
+                <input type="text" id="email" class="form-control input-shadow" placeholder="Enter Your Email ID">
+                <div class="form-control-position">
+                  <i class="icon-envelope-open"></i>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="password" class="sr-only">Password</label>
+              <div class="position-relative has-icon-right">
+                <input type="password" id="password" class="form-control input-shadow" placeholder="Enter Password">
+                <div class="form-control-position">
+                  <i class="icon-lock"></i>
+                </div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="cpassword" class="sr-only">Password</label>
+              <div class="position-relative has-icon-right">
+                <input type="password" id="cpassword" class="form-control input-shadow"
+                  placeholder="Enter Confirm Password">
+                <div class="form-control-position">
+                  <i class="icon-lock"></i>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" id="signUp" class="btn btn-light btn-block waves-effect waves-light">Sign Up</button>
+            <div class="form-group">
+              <div id="error">
+
+              </div>
+            </div>
+
+          </form>
+        </div>
+      </div>
+      <div class="card-footer text-center py-3">
+        <p class="text-warning mb-0">Already have an account? <a href="login.html"> Sign In here</a></p>
+      </div>
+    </div>
+
+
+
+  </div><!--wrapper-->
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="assets/js/jquery.min.js"></script>
+  <script src="assets/js/popper.min.js"></script>
+  <script src="assets/js/bootstrap.min.js"></script>
+
+  <script>
+    let isUserLogin = localStorage.getItem('loggedInUser');
+    if (isUserLogin) {
+      window.location.href = 'index.html'
+    }
+    let userData
+    if (localStorage.getItem('userData') === null || localStorage.getItem('userData') === undefined) {
+      userData = [
+        {
+          id: 1,
+          name: 'admin',
+          username: 'admin',
+          email: 'admin@gmail.com',
+          password: 'admin',
+          role: 'superAdmin',
+          img: './img/default.jpeg'
+        }
+      ]
+    } else {
+      userData = JSON.parse(localStorage.getItem('userData'))
+    }
+    const signUpBtn = document.getElementById('signUp')
+    signUpBtn.onclick = () => {
+      let name = document.getElementById('name').value
+      let username = document.getElementById('username').value
+      let email = document.getElementById('email').value
+      let password = document.getElementById('password').value
+      let cpassword = document.getElementById('cpassword').value
+      let error = document.getElementById('error')
+
+
+      if (name != '') {
+        if (username != '') {
+          if (email != '') {
+            if (password != '') {
+              if (cpassword != '') {
+                if (password == cpassword) {
+                  let usernameFlag = true
+                  let emailFlag = true
+                  for (let user of userData) {
+                    if (user.username == username) {
+                      usernameFlag = false;
+                      break;
+                    }
+                    if (user.email == email) {
+                      emailFlag = false;
+                      break;
+                    }
+                  }
+                  if (usernameFlag && emailFlag) {
+                    let id = userData[userData.length - 1].id + 1
+                    let obj = {
+                      id,
+                      name,
+                      username,
+                      email,
+                      password,
+                      role: 'admin',
+                      img: './img/default.jpeg'
+                    }
+                    userData.push(obj);
+                    localStorage.setItem('userData', JSON.stringify(userData))
+                    emptyForm();
+                    window.location.href = 'login.html'
+                  } else {
+                    if (!usernameFlag) {
+                      errorMsg('Username shoud be unique', 'danger')
+                    }
+                    if (!emailFlag) {
+                      errorMsg('Email Should be unique', 'danger')
+                    }
+                  }
+                } else {
+                  errorMsg('Password and Confirm Password Must be same', 'danger')
+                }
+              } else {
+                errorMsg('Confirm Password could Not be blank', 'danger')
+              }
+            } else {
+              errorMsg('Password could Not be blank', 'danger')
+            }
+          } else {
+            errorMsg('Email could Not be blank', 'danger')
+          }
+        } else {
+          errorMsg('Username could Not be blank', 'danger')
+        }
+      } else {
+        errorMsg('Name could Not be blank', 'danger')
+      }
+
+    }
+    function errorMsg(msg, color) {
+      error.innerHTML = `
+        <div class="alert alert-${color} p-2 mt-4" role="alert">
+            ${msg}
+        </div>
+        `
+      setTimeout(function () {
+        error.innerHTML = ''
+      }, 2000)
+    }
+    function emptyForm() {
+      document.getElementById('name').value = ''
+      document.getElementById('username').value = ''
+      document.getElementById('email').value = ''
+      document.getElementById('password').value = ''
+      document.getElementById('cpassword').value = ''
+    }
+
+  </script>
+</body>
+
+</html>
